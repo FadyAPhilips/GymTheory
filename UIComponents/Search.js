@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, TextInput } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux'
 
@@ -10,13 +10,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: '#eeeeee',
         width: '90%',
-        height: 30,
+        height: 36,
         borderWidth: 0,
-        borderBottomLeftRadius: 15,
-        borderBottomRightRadius: 15,
-        borderTopLeftRadius: 15,
-        borderTopRightRadius: 15,
-        margin: 5
+        borderBottomLeftRadius: 17,
+        borderBottomRightRadius: 17,
+        borderTopLeftRadius: 17,
+        borderTopRightRadius: 17,
+        margin: 5,
+        marginTop: 18
     },
     searchInput: {
         width: '100%',

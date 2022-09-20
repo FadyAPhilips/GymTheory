@@ -1,29 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Image } from 'react-native';
 import store from './redux/store'
 import { Provider } from 'react-redux'
 
-import NavBar from './UIComponents/NavBar'
+import WorkoutListPage from './pages/WorkoutListPage';
 
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    // justifyContent: 'center',
-    backgroundColor: '#eeeeee',
-  },
-});
 
 
 export default function App() {
+
+
   return (
     <Provider store={store}>
-      <View style={styles.container}>
-        <NavBar />
-        <Text>Hello World!</Text>
-        <StatusBar style="auto" />
-      </View>
+      <WorkoutListPage />
     </Provider>
   );
 }
