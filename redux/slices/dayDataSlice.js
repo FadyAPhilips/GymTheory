@@ -15,12 +15,12 @@ export const dayData = createSlice({
             name: 'Sit-ups',
             gif: 'http://d205bpvrqc9yn1.cloudfront.net/0001.gif',
             repsList: ['20', '30', '40', '50', '10'],
-            weightList: []
+            weightList: ['20', '30', '40', '50', '10']
         }, {
             name: 'Pull-ups',
             gif: 'http://d205bpvrqc9yn1.cloudfront.net/0015.gif',
             repsList: ['30', '30', '30', '30'],
-            weightList: []
+            weightList: ['30', '30', '30', '30']
         }, {
             name: 'Close-grip Barbell Bench Press',
             gif: 'http://d205bpvrqc9yn1.cloudfront.net/0055.gif',
@@ -30,12 +30,12 @@ export const dayData = createSlice({
             name: 'Sit-ups',
             gif: 'http://d205bpvrqc9yn1.cloudfront.net/0001.gif',
             repsList: ['20', '30', '40'],
-            weightList: []
+            weightList: ['20', '30', '40']
         }, {
             name: 'Pull-ups',
             gif: 'http://d205bpvrqc9yn1.cloudfront.net/0015.gif',
             repsList: ['30', '30', '30', '30'],
-            weightList: []
+            weightList: ['30', '30', '30', '30']
         }, {
             name: 'Close-grip Barbell Bench Press',
             gif: 'http://d205bpvrqc9yn1.cloudfront.net/0055.gif',

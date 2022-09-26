@@ -8,7 +8,6 @@ export const headerState = createSlice({
     reducers: {
         setDrawer: (state, action) => {
             state.drawerOpen = action.payload
-            console.log('here');
         },
     }
 })

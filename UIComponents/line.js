@@ -9,7 +9,7 @@ const line = (props) => {
         width = '100%'
         height = 'auto'
     } else {
-        width = 'auto'
+        width = "auto"
         height = '100%'
     }
 
@@ -18,8 +18,8 @@ const line = (props) => {
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: '#aaa',
-            width: width,
-            height: height,
+            width,
+            height,
             borderWidth: 1.3,
             borderColor: '#aaa',
             margin: 4
@@ -27,7 +27,7 @@ const line = (props) => {
     });
 
     return (
-        <View style={styles.lineStyle}>
+        <View style={[styles.lineStyle, props.containerStyle]}>
 
         </View>
     )

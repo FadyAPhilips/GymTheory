@@ -17,10 +17,7 @@ class CounterShape extends Component {
             width: this.props.size,
             height: this.props.size,
             borderWidth: 0,
-            borderBottomLeftRadius: (this.props.size / 2),
-            borderBottomRightRadius: (this.props.size / 2),
-            borderTopLeftRadius: (this.props.size / 2),
-            borderTopRightRadius: (this.props.size / 2),
+            borderRadius: (this.props.size / 2),
             margin: 5
         },
         searchInput: {
@@ -34,7 +31,7 @@ class CounterShape extends Component {
 
     onChange = (inputVal) => {
         console.log(inputVal);
-        this.state.inputNumber = inputVal
+        this.setState({ inputNumber: inputVal })
     }
     render() {
 
@@ -47,7 +44,7 @@ class CounterShape extends Component {
                     onChangeText={(value) => this.onChange(value)}
                     editable={this.props.Changeable}
                     textAlign='center'
-                    maxLength={2}
+                    maxLength={this.props.maxLen}
                 />
             </View>
         );

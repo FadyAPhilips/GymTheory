@@ -18,7 +18,8 @@ const WorkoutCard = (props) => {
         cardContainer: {
             display: 'flex',
             width: '100%',
-            flexDirection: 'row'
+            flexDirection: 'row',
+            justifyContent: 'space-between'
         },
         outerLineContainer: {
             width: '90%',
@@ -56,12 +57,14 @@ const WorkoutCard = (props) => {
         },
     });
 
-    const counterList = props.setList.map((set) => {
+    const counterList = props.setList.map((set, i) => {
         return (
             <CounterShape
+                key={i}
                 Changeable={false}
                 num={set}
                 size={36}
+                maxLen={2}
             />
         )
     }
@@ -69,7 +72,7 @@ const WorkoutCard = (props) => {
 
 
     return (
-        <TouchableOpacity style={styles.containerView} onPress={() => console.log(props.workoutName)}>
+        <TouchableOpacity style={styles.containerView} onPress={props.pressed}>
             <View style={styles.cardContainer} >
                 <View style={styles.gifContainer}>
                     < ImageGif
@@ -78,9 +81,14 @@ const WorkoutCard = (props) => {
                     />
                 </View>
                 <View style={styles.infoContainer}>
-                    <Text style={styles.textStyle}>
-                        {props.workoutName}
-                    </Text>
+                    <View style={styles.cardContainer} >
+                        <Text style={styles.textStyle}>
+                            {props.workoutName}
+                        </Text>
+                        <TouchableOpacity onPress={() => console.log('removed workout')}>
+                            <Text style={{ fontSize: 14, color: '#aaa' }}>X</Text>
+                        </TouchableOpacity>
+                    </View>
                     <View style={styles.setContainer}>
                         {counterList}
                     </View>

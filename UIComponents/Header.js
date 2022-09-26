@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Button, Image, InteractionManager } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, InteractionManager, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux'
 import { Calendar } from 'react-native-calendars';
 import dateCalc from 'date-calc'
+import Icon from 'react-native-vector-icons/FontAwesome'
+
 
 import { setSearching, setSearchValue } from '../redux/slices/searchSlice'
 import { setDrawer } from '../redux/slices/headerStates'
@@ -34,6 +36,7 @@ const NavBar = (props) => {
             borderBottomLeftRadius: 15,
             borderBottomRightRadius: 15,
             paddingTop: 6,
+            zIndex: 3
         },
         img: {
             margin: 10,
@@ -43,6 +46,41 @@ const NavBar = (props) => {
         calendarContainer: {
             width: '94%',
             height: 380
+        }, icon: {
+            color: '#eee',
+            padding: 5
+        }, backContainer: {
+            display: 'flex',
+            marginTop: 20,
+            paddingLeft: 10,
+            flexDirection: 'row',
+            alignItems: 'center',
+            width: '100%'
+        }, backTextStyle: {
+            color: '#eee',
+            fontSize: 18
+        },
+        searchPageBarContainer: {
+            display: 'flex',
+            // marginTop: 20,
+            // paddingLeft: 10,
+            flexDirection: 'row',
+            alignItems: 'center',
+            width: '100%'
+        },
+        searchingBackContainer: {
+            display: 'flex',
+            marginTop: 15,
+            paddingRight: 8,
+            flexDirection: 'row',
+            alignItems: 'center',
+            flex: 1,
+            paddingBottom: 10,
+        },
+        searchBarContainer: {
+            flex: 5,
+            marginRight: -10,
+            paddingBottom: 10,
         }
     });
 
@@ -80,21 +118,46 @@ const NavBar = (props) => {
     </View>
 
     const displayInternalComponent = () => {
-        if (drawerOpen) {
+        if (drawerOpen && props.home) {
             return (
                 InternalComponent
             )
         }
     }
 
+    let topHeader, dateHeader
+
+    if (props.home) {
+        topHeader = <Search pressed={props.pressed} />
+        dateHeader = <DateHeader collapsable={true} />
+    } else if (props.search) {
+        topHeader =
+            <View style={styles.backContainer}>
+                <TouchableOpacity style={styles.searchingBackContainer} onPress={props.goBack}>
+                    <Icon name="chevron-left" size={16} style={styles.icon} />
+                    <Text style={styles.backTextStyle}>Home</Text>
+                </TouchableOpacity>
+                <View style={styles.searchBarContainer}>
+                    <Search pressed={props.pressed} />
+                </View>
+            </View>
+    } else {
+        topHeader =
+            <TouchableOpacity style={styles.backContainer} onPress={props.goBack}>
+                <Icon name="chevron-left" size={16} style={styles.icon} />
+                <Text style={styles.backTextStyle}>Home</Text>
+            </TouchableOpacity>
+        dateHeader = <DateHeader collapsable={true} />
+
+    }
+
+
 
     return (
         <View style={styles.nav}>
             <Text>GymTheory</Text>
-            <Search />
-            <DateHeader
-                collapsable={true}
-            />
+            {topHeader}
+            {dateHeader}
             {displayInternalComponent()}
         </View >
     );

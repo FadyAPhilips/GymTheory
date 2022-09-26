@@ -21,9 +21,7 @@ const styles = StyleSheet.create({
     },
     icon: {
         color: '#eee',
-        transform: [
-            { rotate: "180deg" },
-        ]
+
     }
 });
 
@@ -34,8 +32,8 @@ const DateHeader = (props) => {
     const dispatch = useDispatch()
 
 
-    const iconRight = <Icon name="chevron-left" size={16} style={styles.icon} onPress={() => console.log('Tomorrow')} />
-    const iconLeft = <Icon name="chevron-right" size={16} style={styles.icon} onPress={() => console.log('Yesterday')} />
+    const iconLeft = <Icon name="chevron-left" size={16} style={styles.icon} onPress={() => console.log('Yesterday')} />
+    const iconRight = <Icon name="chevron-right" size={16} style={styles.icon} onPress={() => console.log('Tomorrow')} />
 
 
     return (

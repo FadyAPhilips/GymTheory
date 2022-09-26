@@ -43,7 +43,7 @@ const Search = (props) => {
                 value={searchValue}
                 onChangeText={(value) => onChange(value)}
                 placeholder="Search..."
-                onPressIn={() => dispatch(setSearching(true))}
+                onPressIn={props.pressed}
             />
         </View>
     );
