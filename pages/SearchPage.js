@@ -1,47 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+// import { getUniqueId } from 'react-native-device-info';
 
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux'
 
 import NavBar from '../UIComponents/Header'
-import Line from '../UIComponents/line'
 import ImageGif from '../UIComponents/ImageGif'
+import API from '../API';
+import { addExercise } from '../redux/slices/dayDataSlice';
 
 
 
 const SearchPage = ({ navigation, route }) => {
+    const [searchResults, setSearchResults] = useState([])
 
-    const dispatch = useDispatch()
+    const userID = useSelector(state => state.userState.deviceID)
+    const day = useSelector(state => state.dateState.currentDate)
 
-    // const [repList, setReps] = useState(route.params.repsList);
-    // const [weightsList, setWeights] = useState(route.params.weightList);
-
-    // const setNumber = repList.length
-
-
-    let searchedList = [{
-        workout: 'pushup',
-        gif: 'http://d205bpvrqc9yn1.cloudfront.net/0001.gif'
-    }, {
-        workout: 'pushup',
-        gif: 'http://d205bpvrqc9yn1.cloudfront.net/0001.gif'
-    }, {
-        workout: 'pushup',
-        gif: 'http://d205bpvrqc9yn1.cloudfront.net/0001.gif'
-    }, {
-        workout: 'pushup',
-        gif: 'http://d205bpvrqc9yn1.cloudfront.net/0001.gif'
-    }, {
-        workout: 'pushup',
-        gif: 'http://d205bpvrqc9yn1.cloudfront.net/0001.gif'
-    }, {
-        workout: 'pushup',
-        gif: 'http://d205bpvrqc9yn1.cloudfront.net/0001.gif'
-    }, {
-        workout: 'pushup',
-        gif: 'http://d205bpvrqc9yn1.cloudfront.net/0001.gif'
-    },
-    ]
+    const getSearchResults = async (searchValue) => {
+        const data = await API.search(searchValue)
+        setSearchResults(data)
+    }
 
 
     const styles = StyleSheet.create({
@@ -77,19 +56,49 @@ const SearchPage = ({ navigation, route }) => {
 
     const goBack = () => navigation.navigate('Home')
 
+    const dispatch = useDispatch()
 
-    const searchResults = searchedList.map(
+    const goToWorkoutPage = async (name, id, bodypart, equipment) => {
+        const newWorkoutData = {
+            name: name,
+            id: id,
+            repsList: [],
+            weightsList: [],
+            bodypart: bodypart,
+            equipment: equipment
+        }
+        await dispatch(addExercise({ newWorkoutId: id, newWorkoutData }))
+
+        await API.createExercise(userID, id, day.timestamp)
+
+        await API.modifyExercise(userID, id, day.timestamp,
+            newWorkoutData
+        )
+
+
+        navigation.navigate('Workout', {
+            name: name,
+            id: id,
+            repsList: [],
+            weightsList: [],
+            bodypart: bodypart,
+            equipment: equipment
+        })
+    }
+
+
+    const resultsComponents = searchResults.map(
         (result, i) => {
             return (
-                <View style={styles.result} key={i}>
+                <TouchableOpacity style={styles.result} key={Math.random()} onPress={() => goToWorkoutPage(result.name, result.id, result.bodyPart, result.equipment)}>
                     < ImageGif
-                        imgSource={result.gif}
+                        imgSource={result.id}
                         size={170}
                     />
                     <View>
-                        <Text style={styles.textStyle}>{result.workout}</Text>
+                        <Text style={styles.textStyle}>{result.name}</Text>
                     </View>
-                </View>
+                </TouchableOpacity>
             )
         }
     )
@@ -98,10 +107,10 @@ const SearchPage = ({ navigation, route }) => {
 
     return (
         <View style={styles.container}>
-            <NavBar goBack={() => goBack()} search />
+            <NavBar onSearch={getSearchResults} goBack={() => goBack()} search />
             <ScrollView style={styles.scrollContainer}>
                 <View style={styles.allResults}>
-                    {searchResults}
+                    {resultsComponents}
                 </View>
             </ScrollView >
         </View >

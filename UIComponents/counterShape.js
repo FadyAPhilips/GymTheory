@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableHighlight } from 'react-native';
 
 
 
@@ -8,6 +8,12 @@ class CounterShape extends Component {
     state = {
         inputNumber: this.props.num
     }
+
+
+    num = this.state.inputNumber.length > 2
+
+    size = this.num ? 4.5 : 3.2
+
 
     styles = StyleSheet.create({
         counterContainer: {
@@ -23,17 +29,24 @@ class CounterShape extends Component {
         searchInput: {
             width: '100%',
             paddingHorizontal: 10,
-            fontSize: this.props.size / 3.2,
+            fontSize: this.props.size / this.size,
             color: 'black',
             fontWeight: 'bold',
         }
     });
 
     onChange = (inputVal) => {
-        console.log(inputVal);
         this.setState({ inputNumber: inputVal })
     }
+
+    endEditing = (v) => {
+        this.props.changed(v.nativeEvent.text, this.props.index, this.props.type)
+    }
+
+
+
     render() {
+
 
         return (
             <View style={this.styles.counterContainer} >
@@ -45,6 +58,8 @@ class CounterShape extends Component {
                     editable={this.props.Changeable}
                     textAlign='center'
                     maxLength={this.props.maxLen}
+                    onEndEditing={(value) => this.endEditing(value)}
+
                 />
             </View>
         );

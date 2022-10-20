@@ -13,14 +13,21 @@
     "@react-navigation/native": "^6.0.13",
     "@react-navigation/native-stack": "^6.9.0",
     "@reduxjs/toolkit": "^1.8.5",
+    "axios": "^0.27.2",
     "date-calc": "^1.0.9",
     "expo": "~46.0.9",
     "expo-status-bar": "~1.4.0",
+    "moment": "^2.29.4",
+    "moment-timezone": "^0.5.38",
     "react": "18.0.0",
     "react-native": "0.69.5",
     "react-native-calendars": "^1.1289.0",
+    "react-native-device-info": "^10.2.0",
+    "react-native-flash-message": "^0.3.1",
     "react-native-vector-icons": "^9.2.0",
-    "react-redux": "^8.0.2"
+    "react-redux": "^8.0.2",
+    "expo-device": "~4.3.0",
+    "expo-constants": "~13.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

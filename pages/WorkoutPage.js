@@ -1,25 +1,34 @@
-import React, { useState } from 'react';
-
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux'
+import { setOneWorkout } from '../redux/slices/dayDataSlice';
 
 import NavBar from '../UIComponents/Header'
 import Line from '../UIComponents/line'
 import ImageGif from '../UIComponents/ImageGif'
 import CounterShape from '../UIComponents/counterShape'
+import API from '../API';
 
 
 const WorkoutPage = ({ navigation, route }) => {
 
     const dispatch = useDispatch()
 
-    const [repList, setReps] = useState(route.params.repsList);
-    const [weightsList, setWeights] = useState(route.params.weightList);
+    const day = useSelector(state => state.dateState.currentDate)
+    const userID = useSelector(state => state.userState.deviceID)
 
-    const setNumber = repList.length
+    const [workout, setWorkout] = useState({
+        name: route.params.name,
+        id: route.params.id,
+        repsList: route.params.repsList,
+        weightsList: route.params.weightsList,
+        bodypart: route.params.bodypart,
+        equipment: route.params.equipment
+    }
+    );
 
-    console.log(repList);
-    console.log(weightsList);
+
+    const setNumber = workout.repsList.length
 
 
     const styles = StyleSheet.create({
@@ -59,6 +68,7 @@ const WorkoutPage = ({ navigation, route }) => {
         scrollContainer: {
             width: '100%',
             marginTop: -220,
+            paddingBottom: 20
         },
         setsInfo: {
             width: '100%',
@@ -100,7 +110,7 @@ const WorkoutPage = ({ navigation, route }) => {
             fontWeight: 'bold'
         },
         addSetButton: {
-            backgroundColor: '#ee5050',
+            backgroundColor: '#eeeeee',
             width: 60,
             height: 60,
             margin: 7,
@@ -125,94 +135,167 @@ const WorkoutPage = ({ navigation, route }) => {
 
     const goBack = () => navigation.navigate('Home')
 
-    const addSet = (r, w) => {
+    useEffect(() => {
+
+        (async () => {
+            await API.modifyExercise(userID, workout.id, day.timestamp, workout)
+        })();
+
+
+    }, [workout]);
+
+    const addSet = async (r, w) => {
 
         if (setNumber < 5) {
 
-            console.log(r, w);
+            const currentWorkout = { ...workout }
 
-            let oldReps = [...repList]
-            let oldWeights = [...weightsList]
-
+            let oldReps = [...currentWorkout.repsList]
+            let oldWeights = [...currentWorkout.weightsList]
 
             oldReps.push(r)
             oldWeights.push(w)
 
-            console.log(oldReps);
-            console.log(oldWeights);
+            const newWorkout = { ...workout }
 
-            setReps(oldReps)
-            setWeights(oldWeights)
+            newWorkout.repsList = oldReps
+            newWorkout.weightsList = oldWeights
+
+            setWorkout(newWorkout)
+
+
+            API.modifyExercise(userID, workout.id, day.timestamp, newWorkout)
+
+
+            await dispatch(setOneWorkout({ newWorkout }))
+
+
         }
-
 
     }
 
-    const removeSet = (iToRemove) => {
+
+
+    const removeSet = async (iToRemove) => {
 
 
         let newReps = []
         let newWeights = []
 
-        let oldReps = [...repList]
-        let oldWeights = [...weightsList]
+        let oldReps = [...workout.repsList]
+        let oldWeights = [...workout.weightsList]
 
-        repList.forEach((set, i) => {
+        const newWorkout = { ...workout }
 
+
+        newWorkout.repsList.forEach((set, i) => {
 
             if (!(i == iToRemove)) {
-
-                console.log(i);
 
                 newReps.push(oldReps[i])
                 newWeights.push(oldWeights[i])
             }
-
-
-
         });
 
-        // console.log(newReps);
-        // console.log(newWeights);
 
-        setReps(newReps)
-        setWeights(newWeights)
-
-    }
-
-    const submit = () => {
-
-        console.log('Submit');
+        newWorkout.repsList = newReps
+        newWorkout.weightsList = newWeights
 
 
-        goBack()
+        setWorkout(newWorkout)
+
+        API.modifyExercise(userID, workout.id, day.timestamp, newWorkout)
+
+        await dispatch(setOneWorkout({ newWorkout }))
+
 
     }
 
 
-    const sets = repList.map((reps, i) => {
+    const onNumChange = async (num, index, type) => {
 
-        // console.log(reps);
+        let newWorkout = { ...workout }
+
+        console.log(type);
+
+        if (type === "reps") {
+
+            console.log("NOT HEREE");
+
+            const newReps = [...newWorkout.repsList]
+            newReps[index] = num
+            console.log(newReps);
+            newWorkout.repsList = newReps
+
+        } else if (type === "weight") {
+
+            console.log("HERE");
+            const newWeights = [...newWorkout.weightsList]
+            newWeights[index] = num
+            console.log(newWeights);
+            newWorkout.weightsList = newWeights
+        }
+
+        console.log(newWorkout);
+
+        setWorkout(newWorkout)
+
+        API.modifyExercise(userID, workout.id, day.timestamp, newWorkout)
+
+        await dispatch(setOneWorkout({ newWorkout }))
+
+    }
+
+
+    const sets = workout.repsList.map((reps, i) => {
+
+
+        const type = () => {
+            if (workout.bodypart === "cardio") {
+                return (
+                    <View style={styles.weightStyle} >
+                        <Text style={styles.textStyle}>Minutes    </Text>
+                    </View>
+                )
+            } else if (workout.equipment === "body weight") {
+                return (
+                    <View style={styles.weightStyle} >
+                        <Text style={styles.textStyle}>Reps  /</Text>
+                        <Text style={styles.textStyle}>Body Weight</Text>
+                    </View>
+                )
+            } else {
+                return (
+                    <View style={styles.weightStyle}>
+                        <Text style={styles.textStyle}>Reps /    </Text>
+                        <CounterShape
+                            index={i}
+                            Changeable={true}
+                            num={workout.weightsList[i]}
+                            size={60}
+                            maxLen={3}
+                            type={"weight"}
+                            changed={onNumChange}
+                        />
+                        <Text style={styles.textStyle}>Pounds</Text>
+                    </View>
+                )
+            }
+        }
 
         return (
 
-            <View style={styles.singleSetView} key={i}>
+            <View style={styles.singleSetView} key={Math.random()}>
                 <CounterShape
+                    index={i}
                     Changeable={true}
                     num={reps}
                     size={60}
                     maxLen={2}
+                    type={"reps"}
+                    changed={onNumChange}
                 />
-                <View style={styles.weightStyle}>
-                    <Text style={styles.textStyle}>/</Text>
-                    <CounterShape
-                        Changeable={true}
-                        num={weightsList[i]}
-                        size={60}
-                        maxLen={3}
-                    />
-                    <Text style={styles.textStyle}>Pounds</Text>
-                </View>
+                {type()}
                 <TouchableOpacity onPress={() => removeSet(i)}>
                     <Text style={{ fontSize: 15, left: 20, color: '#eee' }}>X</Text>
                 </TouchableOpacity>
@@ -220,7 +303,22 @@ const WorkoutPage = ({ navigation, route }) => {
         )
     })
 
-    console.log(route.params.index);
+
+    const displayAddButton = () => {
+
+        if (setNumber < 5) {
+
+            return (
+                <TouchableOpacity style={styles.addSetButton} onPress={() => addSet('0', '0')}>
+                    <Text style={{ fontSize: 40, bottom: 2 }}>+</Text>
+                </TouchableOpacity>
+            )
+
+
+        }
+
+    }
+
 
 
     return (
@@ -230,7 +328,7 @@ const WorkoutPage = ({ navigation, route }) => {
                 <View style={styles.imageView}>
                     <View style={styles.imgStyle}>
                         < ImageGif
-                            imgSource={route.params.gif}
+                            imgSource={workout.id}
                             size={360}
                             style={styles.imgStyle}
                         />
@@ -238,7 +336,7 @@ const WorkoutPage = ({ navigation, route }) => {
                 </View>
                 <View style={styles.titleContainer}>
                     <Text style={styles.titleStyle}>
-                        {route.params.name}
+                        {workout.name}
                     </Text>
                 </View>
                 <View style={styles.lineContainer}>
@@ -252,19 +350,11 @@ const WorkoutPage = ({ navigation, route }) => {
 
                         {sets}
 
-
                     </View>
                 </View>
 
-                <TouchableOpacity style={styles.addSetButton} onPress={() => addSet('12', '120')}>
-                    <Text style={{ fontSize: 40, bottom: 2 }}>+</Text>
-                </TouchableOpacity>
 
-                <View>
-                    <TouchableOpacity style={styles.submitButton} onPress={() => submit()}>
-                        <Text style={{ fontSize: 40, bottom: 2, color: '#eee' }}>Submit</Text>
-                    </TouchableOpacity>
-                </View>
+                {displayAddButton()}
 
 
             </ScrollView >

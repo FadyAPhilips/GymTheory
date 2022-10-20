@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, TextInput } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux'
 
-import { setSearching, setSearchValue } from '../redux/slices/searchSlice'
+import { setSubmitValue, setSearchValue } from '../redux/slices/searchSlice'
 
 const styles = StyleSheet.create({
     searchContainer: {
@@ -36,14 +36,21 @@ const Search = (props) => {
         dispatch(setSearchValue(searchVal))
     }
 
+    const onSub = (newText) => {
+        props.onSearch(newText.nativeEvent.text)
+    }
+
     return (
         <View style={styles.searchContainer}>
             <TextInput
+                autoFocus={props.focus}
                 style={styles.searchInput}
-                value={searchValue}
-                onChangeText={(value) => onChange(value)}
+                // value={searchValue}
+                // onChangeText={(value) => onChange(value)}
+                onSubmitEditing={(newText) => onSub(newText)}
                 placeholder="Search..."
                 onPressIn={props.pressed}
+                autoCapitalize='none'
             />
         </View>
     );

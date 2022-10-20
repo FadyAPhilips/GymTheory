@@ -1,15 +1,14 @@
-import React, { Component } from 'react';
+import React, { Children, Component } from 'react';
 import { StyleSheet, Text, View, Button, Image, InteractionManager, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux'
 import { Calendar } from 'react-native-calendars';
-import dateCalc from 'date-calc'
 import Icon from 'react-native-vector-icons/FontAwesome'
+import moment from "moment"
+import API from '../API';
 
 
-import { setSearching, setSearchValue } from '../redux/slices/searchSlice'
 import { setDrawer } from '../redux/slices/headerStates'
-import { setDate } from '../redux/slices/dayDataSlice'
-
+import { setDate, setWorkouts } from '../redux/slices/dayDataSlice'
 
 import Search from "./Search"
 import DateHeader from './DateHeader';
@@ -22,6 +21,8 @@ const NavBar = (props) => {
     const searching = useSelector(state => state.searchState.searching)
     const drawerOpen = useSelector(state => state.headerState.drawerOpen)
     const date = useSelector(state => state.dateState.currentDate)
+    const userID = useSelector(state => state.userState.deviceID)
+
     const dispatch = useDispatch()
 
 
@@ -84,11 +85,37 @@ const NavBar = (props) => {
         }
     });
 
-    const changeDateState = (date) => {
-        dispatch(setDate(date))
+    const onDateChange = async () => { await props.onDateChange() }
+
+
+    const changeDateState = async (date) => {
+
+        const newDate = { ...date }
+
+        console.log(date.month);
+
+        const momentObj = moment().set({ year: date.year, month: date.month - 1, date: date.day, hour: 0, minute: 0, second: 0, millisecond: 0 })
+
+        newDate.timestamp = momentObj.unix() * 1000
+
+        console.log(momentObj.format("MM-DD-YYYY"));
+
+
+        console.log(newDate);
+        console.log('NEWWW', newDate.timestamp);
+
+        await dispatch(setDate(newDate))
+
+        // onDateChange()
+
+        const raw = await API.getWorkout(userID, newDate.timestamp)
+
+        const parsed = JSON.parse(raw.data.body)?.Item?.workoutData
+
+        await dispatch(setWorkouts(parsed))
     }
 
-    const InternalComponent = <View style={styles.calendarContainer} e>
+    const InternalComponent = <View style={styles.calendarContainer}>
         <Calendar
 
             theme={{
@@ -112,7 +139,11 @@ const NavBar = (props) => {
                 [date.dateString]: { selected: true },
             }}
             onDayPress={day => {
+
+                console.log(day);
+
                 changeDateState(day);
+                dispatch(setDrawer(false))
             }}
         />
     </View>
@@ -138,7 +169,7 @@ const NavBar = (props) => {
                     <Text style={styles.backTextStyle}>Home</Text>
                 </TouchableOpacity>
                 <View style={styles.searchBarContainer}>
-                    <Search pressed={props.pressed} />
+                    <Search onSearch={props.onSearch} pressed={props.pressed} focus />
                 </View>
             </View>
     } else {

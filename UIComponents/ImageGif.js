@@ -24,7 +24,7 @@ const Img = (props) => {
         }
     });
 
-    const imgSource = props.imgSource
+    const imgSource = "https://d205bpvrqc9yn1.cloudfront.net/" + props.imgSource + ".gif"
 
     return (
         <View style={styles.container}>

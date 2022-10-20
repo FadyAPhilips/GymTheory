@@ -40,11 +40,11 @@ const DateHeader = (props) => {
         <View style={styles.date}
             onPress={() => dispatch(setDrawer(!drawerOpen))}
         >
-            {iconLeft}
+            {/* {iconLeft} */}
             <Text style={styles.text} onPress={() => dispatch(setDrawer(!drawerOpen))}>
                 {date.day} / {date.month} / {date.year}
             </Text>
-            {iconRight}
+            {/* {iconRight} */}
         </View >
     );
 }
